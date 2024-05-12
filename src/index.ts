@@ -8,9 +8,8 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded());
 
-console.log(path.join(__dirname, 'public'));
 if (process.env.NODE_ENV === 'production') {
-	app.use(express.static(path.join(__dirname, 'public')));
+	app.use(express.static(path.resolve(__dirname, 'public')));
 } else {
 	const corsOptions = {
 		origin: ['http://127.0.0.1:5173', 'http://localhost:5173'],
@@ -22,7 +21,7 @@ if (process.env.NODE_ENV === 'production') {
 app.use('/api/expense', expenseRoutes);
 
 app.get('/**', (req, res) => {
-	res.sendFile(path.resolve('public/index.html'));
+	res.sendFile(path.resolve(__dirname, 'public/index.html'));
 });
 
 const port = process.env.PORT || 3030;
