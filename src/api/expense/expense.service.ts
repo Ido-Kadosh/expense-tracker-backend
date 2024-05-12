@@ -1,14 +1,15 @@
 import { ObjectId } from 'mongodb';
 import { dbService } from '../../services/db.service';
-import { Expense } from '../../types/expense';
+import { IExpense, IExpenseFilter } from '../../types/expense';
 import { logger } from '../../services/logger.service';
 
 const COLLECTION_NAME = 'expense';
 
-const query = async () => {
+const query = async (filterBy: IExpenseFilter) => {
 	try {
+		const criteria = _buildCriteria(filterBy);
 		const collection = await dbService.getCollection(COLLECTION_NAME);
-		const expenses = await collection.find({}).toArray();
+		const expenses = await collection.find(criteria, { sort: { createdAt: -1 } }).toArray();
 		return expenses;
 	} catch (err) {
 		logger.error('cannot find expenses', err);
@@ -30,18 +31,19 @@ const getById = async (expenseId: string) => {
 	}
 };
 
-const add = async (expense: Expense) => {
+const add = async (expense: Omit<IExpense, '_id'>) => {
 	try {
-		const { _id, ...expenseWithoutId } = expense;
+		console.log(expense);
+		expense.createdAt = Date.now();
 		const collection = await dbService.getCollection(COLLECTION_NAME);
-		await collection.insertOne(expenseWithoutId);
+		await collection.insertOne(expense);
 	} catch (err) {
 		logger.error('error adding expense', err);
 		throw err;
 	}
 };
 
-const update = async (expense: Expense) => {
+const update = async (expense: IExpense) => {
 	try {
 		const id = expense._id;
 		delete expense._id;
@@ -66,10 +68,56 @@ const remove = async (expenseId: string) => {
 	}
 };
 
+const getPriceRanges = async () => {
+	try {
+		const collection = await dbService.getCollection(COLLECTION_NAME);
+		const result = await collection
+			.aggregate([
+				{
+					$group: {
+						_id: null,
+						max: { $max: '$amount' },
+						min: { $min: '$amount' },
+					},
+				},
+				{
+					$project: {
+						_id: 0,
+						max: { $ceil: '$max' },
+						min: { $floor: '$min' },
+					},
+				},
+			])
+			.toArray();
+		delete result[0]._id;
+		return result[0];
+	} catch (err) {
+		logger.error('error getting price ranges', err);
+		throw err;
+	}
+};
+
+const _buildCriteria = (filterBy: IExpenseFilter) => {
+	const criteria: { [key: string]: any } = {};
+	if (filterBy.title) {
+		criteria.title = { $regex: filterBy.title, $options: 'i' };
+	}
+	if (filterBy.minAmount) {
+		criteria.amount ??= {};
+		criteria.amount.$gte = filterBy.minAmount;
+	}
+	if (filterBy.maxAmount) {
+		criteria.amount ??= {};
+		criteria.amount.$lte = filterBy.maxAmount;
+	}
+	return criteria;
+};
+
 export const expenseService = {
 	query,
 	getById,
 	update,
 	add,
 	remove,
+	getPriceRanges,
 };

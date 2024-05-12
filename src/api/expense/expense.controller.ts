@@ -1,9 +1,15 @@
 import { Request, Response } from 'express';
 import { expenseService } from './expense.service';
+import { IExpenseFilter } from '../../types/expense';
 
 export const getExpenses = async (req: Request, res: Response) => {
 	try {
-		const expenses = await expenseService.query();
+		const filterBy = {
+			title: req?.query?.title + '' || '',
+			minAmount: +req?.query?.minAmount || 0,
+			maxAmount: +req?.query?.maxAmount || 0,
+		};
+		const expenses = await expenseService.query(filterBy as IExpenseFilter);
 		res.json(expenses);
 	} catch (err) {
 		res.status(400).send({ err: 'Failed to get expenses' });
@@ -22,7 +28,7 @@ export const getExpenseById = async (req: Request, res: Response) => {
 
 export const addExpense = async (req: Request, res: Response) => {
 	try {
-		const expense = req.body;
+		const { _id, ...expense } = req.body; // remove unnecessary _id
 		const addedExpense = await expenseService.add(expense);
 		res.json(addedExpense);
 	} catch (err) {
@@ -47,5 +53,14 @@ export const removeExpense = async (req: Request, res: Response) => {
 		res.json(removedId);
 	} catch (err) {
 		res.status(400).send({ err: 'Failed to remove expense' });
+	}
+};
+
+export const getExpensePriceRanges = async (req: Request, res: Response) => {
+	try {
+		const ranges = await expenseService.getPriceRanges();
+		res.json(ranges);
+	} catch (err) {
+		res.status(400).send({ err: 'Failed to get ranges' });
 	}
 };
