@@ -6,7 +6,7 @@ This project serves as the backend for [Expense Tracker](https://github.com/Ido-
 
 ## Prerequisites
 
-Before you begin, make sure you have Node.js installed on your computer.
+Before you begin, make sure you have Node.js and mongoDB installed on your computer.
 
 ## Installing the project
 
@@ -24,7 +24,9 @@ To run the project locally, open terminal inside the project's folder and type:
 npm start
 ```
 
-# You will also need to populate a mongoDB collection to view data
+## Populating Database
+
+You will need to populate mongoDB's database in order to access data.
 
 You can do this by opening the project's folder and running
 ```
