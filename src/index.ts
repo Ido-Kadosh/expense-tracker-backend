@@ -8,8 +8,9 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded());
 
+console.log(path.join(__dirname, 'public'));
 if (process.env.NODE_ENV === 'production') {
-	app.use(express.static(path.resolve('public')));
+	app.use(express.static(path.join(__dirname, 'public')));
 } else {
 	const corsOptions = {
 		origin: ['http://127.0.0.1:5173', 'http://localhost:5173'],

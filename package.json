@@ -5,7 +5,7 @@
 	"scripts": {
 		"dev": "ts-node-dev --poll src/index.ts",
 		"build": "rimraf ./dist && tsc && node scripts/copy-public.js",
-		"start": "npm run build && node dist/index.js"
+		"start": "npm run build && node ./dist/index.js"
 	},
 	"keywords": [],
 	"author": "",
