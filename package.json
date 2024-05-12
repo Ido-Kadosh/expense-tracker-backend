@@ -3,9 +3,9 @@
 	"version": "1.0.0",
 	"main": "index.js",
 	"scripts": {
-		"dev": "ts-node-dev --poll src/server.ts",
+		"dev": "ts-node-dev --poll src/index.ts",
 		"build": "rimraf ./dist && tsc && node scripts/copy-public.js",
-		"start": "npm run build && node dist/server.js"
+		"start": "npm run build && node dist/index.js"
 	},
 	"keywords": [],
 	"author": "",
