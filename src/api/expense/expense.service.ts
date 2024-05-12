@@ -89,7 +89,14 @@ const getPriceRanges = async () => {
 				},
 			])
 			.toArray();
+		if (result.length === 0) {
+			logger.info('no expenses found');
+			return { min: 1, max: 1000 };
+		}
 		delete result[0]._id;
+		// make sure min and max are never equal
+		if (result[0].min === result[0].max) result[0].min -= 1;
+
 		return result[0];
 	} catch (err) {
 		logger.error('error getting price ranges', err);
