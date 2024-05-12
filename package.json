@@ -4,7 +4,7 @@
 	"main": "index.js",
 	"scripts": {
 		"dev": "ts-node-dev --poll src/server.ts",
-		"build": "rimraf ./dist && tsc",
+		"build": "rimraf ./dist && tsc && node scripts/copy-public.js",
 		"start": "npm run build && node dist/server.js"
 	},
 	"keywords": [],
@@ -23,6 +23,7 @@
 	"dependencies": {
 		"cors": "^2.8.5",
 		"express": "^4.19.2",
+		"fs-extra": "^11.2.0",
 		"mongodb": "^6.6.1"
 	}
 }
