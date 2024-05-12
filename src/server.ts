@@ -20,6 +20,10 @@ if (process.env.NODE_ENV === 'production') {
 
 app.use('/api/expense', expenseRoutes);
 
+app.get('/**', (req, res) => {
+	res.sendFile(path.resolve('public/index.html'));
+});
+
 const port = process.env.PORT || 3030;
 app.listen(port, () => {
 	console.log('server is running on port:' + port);
