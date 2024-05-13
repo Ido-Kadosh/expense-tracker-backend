@@ -28,7 +28,7 @@ const doLog = (type: string, ...args: any) => {
 
 export const logger = {
 	debug(...args: any) {
-		if (process.env.NODE_NEV === 'production') return;
+		if (process.env.NODE_ENV === 'production') return;
 		doLog('DEBUG', ...args);
 	},
 	info(...args: any) {
