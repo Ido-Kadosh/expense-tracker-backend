@@ -29,6 +29,10 @@ app.get('/**', (req, res) => {
 	res.sendFile(path.resolve(__dirname, 'public/index.html'));
 });
 
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+	console.error(err.stack);
+	res.status(err.status || 500).send(err.message || 'Internal Server Error');
+});
 
 const port = process.env.PORT || 3030;
 app.listen(port, () => {
