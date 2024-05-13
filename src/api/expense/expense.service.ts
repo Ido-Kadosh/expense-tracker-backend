@@ -35,8 +35,8 @@ const add = async (expense: Omit<IExpense, '_id'>) => {
 	try {
 		expense.createdAt = Date.now();
 		const collection = await dbService.getCollection(COLLECTION_NAME);
-		const addedExpense = await collection.insertOne(expense);
-		return addedExpense;
+		const insertedId = (await collection.insertOne(expense)).insertedId;
+		return { ...expense, _id: insertedId };
 	} catch (err) {
 		logger.error('error adding expense', err);
 		throw err;
@@ -48,7 +48,11 @@ const update = async (expense: IExpense) => {
 		const id = expense._id;
 		delete expense._id;
 		const collection = await dbService.getCollection(COLLECTION_NAME);
-		const updatedExpense = await collection.updateOne({ _id: new ObjectId(id) }, { $set: expense });
+		const updatedExpense = await collection.findOneAndUpdate(
+			{ _id: new ObjectId(id) },
+			{ $set: expense },
+			{ returnDocument: 'after' }
+		);
 		return updatedExpense;
 	} catch (err) {
 		logger.error(`error updating expense ${expense._id}`, err);
@@ -149,8 +153,7 @@ const _buildCriteria = (filterBy: IExpenseFilter) => {
 			})),
 		};
 	}
-	const util = require('util');
-	console.log(util.inspect(criteria, true, 10));
+
 	return criteria;
 };
 

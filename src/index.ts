@@ -1,12 +1,14 @@
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express, { NextFunction, Request, Response } from 'express';
+import http from 'http';
 import path from 'path';
-import cookieParser from 'cookie-parser';
-
-import { expenseRoutes } from './api/expense/expense.routes';
 import { authRoutes } from './api/auth/auth.routes';
+import { expenseRoutes } from './api/expense/expense.routes';
+import { setupSocketAPI } from './services/socket.service';
 
 const app = express();
+const server = http.createServer(app);
 
 app.use(cookieParser());
 app.use(express.json());
@@ -25,6 +27,8 @@ if (process.env.NODE_ENV === 'production') {
 app.use('/api/expense', expenseRoutes);
 app.use('/api/auth', authRoutes);
 
+setupSocketAPI(server);
+
 app.get('/**', (req, res) => {
 	res.sendFile(path.resolve(__dirname, 'public/index.html'));
 });
@@ -35,6 +39,6 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 });
 
 const port = process.env.PORT || 3030;
-app.listen(port, () => {
+server.listen(port, () => {
 	console.log('server is running on port:' + port);
 });
