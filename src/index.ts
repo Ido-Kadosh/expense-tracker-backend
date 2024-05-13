@@ -1,10 +1,14 @@
 import cors from 'cors';
-import express from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import path from 'path';
+import cookieParser from 'cookie-parser';
+
 import { expenseRoutes } from './api/expense/expense.routes';
+import { authRoutes } from './api/auth/auth.routes';
 
 const app = express();
 
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded());
 
@@ -19,10 +23,12 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 app.use('/api/expense', expenseRoutes);
+app.use('/api/auth', authRoutes);
 
 app.get('/**', (req, res) => {
 	res.sendFile(path.resolve(__dirname, 'public/index.html'));
 });
+
 
 const port = process.env.PORT || 3030;
 app.listen(port, () => {
