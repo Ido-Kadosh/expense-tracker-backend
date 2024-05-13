@@ -141,6 +141,16 @@ const _buildCriteria = (filterBy: IExpenseFilter) => {
 		criteria.amount ??= {};
 		criteria.amount.$lte = filterBy.maxAmount;
 	}
+	if (filterBy.categories.length) {
+		// get all expenses that contain ALL categories selected
+		criteria.categories = {
+			$all: filterBy.categories.map(c => ({
+				$elemMatch: { id: c.id },
+			})),
+		};
+	}
+	const util = require('util');
+	console.log(util.inspect(criteria, true, 10));
 	return criteria;
 };
 

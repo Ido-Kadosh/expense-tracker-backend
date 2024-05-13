@@ -1,13 +1,14 @@
 import { Request, Response } from 'express';
 import { expenseService } from './expense.service';
-import { IExpenseFilter } from '../../types/expense';
+import { ICategory, IExpenseFilter } from '../../types/expense';
 
 export const getExpenses = async (req: Request, res: Response) => {
 	try {
 		const filterBy = {
-			title: req?.query?.title + '' || '',
-			minAmount: +req?.query?.minAmount || 0,
-			maxAmount: +req?.query?.maxAmount || 0,
+			title: req.query?.title || '',
+			minAmount: +req.query?.minAmount || 0,
+			maxAmount: +req.query?.maxAmount || 0,
+			categories: (req.query?.categories as unknown as ICategory[]) || [],
 		};
 		const expenses = await expenseService.query(filterBy as IExpenseFilter);
 		res.json(expenses);

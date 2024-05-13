@@ -6,8 +6,14 @@ export interface IExpense {
 	createdAt: number;
 }
 
+export interface ICategory {
+	id: string;
+	txt: string;
+	imgUrl: string;
+}
 export interface IExpenseFilter {
-	title?: string;
-	minAmount?: number;
-	maxAmount?: number;
+	title: string;
+	minAmount: number;
+	maxAmount: number;
+	categories: ICategory[];
 }
