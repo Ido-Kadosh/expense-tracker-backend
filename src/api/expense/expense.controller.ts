@@ -64,3 +64,12 @@ export const getExpensePriceRanges = async (req: Request, res: Response) => {
 		res.status(400).send({ err: 'Failed to get ranges' });
 	}
 };
+
+export const getCategoryCounts = async (req: Request, res: Response) => {
+	try {
+		const categoryCounts = await expenseService.getCategoryCounts();
+		res.json(categoryCounts);
+	} catch (err) {
+		res.status(400).send({ err: 'Failed to get category counts' });
+	}
+};
